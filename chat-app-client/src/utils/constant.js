@@ -8,4 +8,5 @@ export const AUTH_URL = '/api/auth'
 
 //all auth routes
 export const SIGNUP_ROUTE = `${AUTH_URL}/signup`
+export const LOGIN_ROUTE = `${AUTH_URL}/login`
 

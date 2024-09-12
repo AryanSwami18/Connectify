@@ -20,7 +20,7 @@ export const signup = asyncHandler(async (req, res, next) => {
             return next(new ApiError(400, 'confirm Password dose not  match'));
         }
         if (existedUserEmail) {
-            return next( new ApiError(400, "Account Already Exists With The Email:", email));
+            return next(new ApiError(400, "Account Already Exists With The Email:", email));
         }
 
         const user = await User.create({ email, password });
@@ -32,13 +32,13 @@ export const signup = asyncHandler(async (req, res, next) => {
 
 
         if (!createdUser) {
-            return next( new ApiError(500, "Something Went Wrong While Creating the User"));
+            return next(new ApiError(500, "Something Went Wrong While Creating the User"));
         }
 
-        res.cookie("jwt",createdUser.generateAccessToken(),{
-            maxAge:process.env.EXPIRY,
-            secure:true,
-            sameSite:'none'
+        res.cookie("jwt", createdUser.generateAccessToken(), {
+            maxAge: process.env.EXPIRY,
+            secure: true,
+            sameSite: 'none'
         });
         return res
             .status(201)
@@ -49,6 +49,47 @@ export const signup = asyncHandler(async (req, res, next) => {
 });
 
 
-export const login = asyncHandler(async(req,res,next) = {
-    
+export const login = asyncHandler(async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return next(new ApiError(400, "Email And Password is Required"));
+        }
+
+        const user = await User.findOne({ email });
+
+
+        if (!user) {
+            return next(new ApiError(400, "No user registered with the given email"));
+        }
+
+
+        const auth = await user.isPasswordCorrect(password);
+
+        if (!auth) {
+            return next(new ApiError(400, "Password is incorrect"));
+        }
+
+        res.cookie("jwt", user.generateAccessToken(), {
+            maxAge: process.env.EXPIRY,
+            secure: true,
+            sameSite: 'none'
+        });
+
+
+
+        // Omit password field before sending user data
+        const { password: _, ...userWithoutPassword } = user.toObject();
+
+        // Send response to frontend
+        return res.status(200).json({
+            message: "Login successful",
+            user: userWithoutPassword
+        });
+
+
+    } catch (error) {
+
+    }
 });

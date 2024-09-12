@@ -7,14 +7,24 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { apiClient } from '@/lib/apiClient.js'
-import { HOST, SIGNUP_ROUTE } from '@/utils/constant';
+import { HOST, LOGIN_ROUTE, SIGNUP_ROUTE } from '@/utils/constant';
 function Auth() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('')
 
+  const validateLogin = () =>{
+    if (!email.length) {
+      toast.error('Email Cannot be null')
+      return false
+    }
 
+    if (!password.length) {
+      toast.error('Password Cannot be null')
+      return false
+    }
+  }
 
   const validateSignup = () => {
     if (!email.length) {
@@ -34,12 +44,16 @@ function Auth() {
     return true
   }
   const handleLogin = async () => {
-
+      if(validateLogin){
+        const response = await apiClient.post(LOGIN_ROUTE,{email,password},{withCredentials:true})
+        console.log(response);
+        
+      }
   }
 
   const handleSignUp = async () => {
     if (validateSignup()) {      
-      const response = await apiClient.post(SIGNUP_ROUTE,{email,password,confirmPassword});
+      const response = await apiClient.post(SIGNUP_ROUTE,{email,password,confirmPassword},{withCredentials:true});
       console.log(response)
     }
   }
