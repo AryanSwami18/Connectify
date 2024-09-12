@@ -1,6 +1,6 @@
-import { genSalt, hash } from "bcrypt";
+import { genSalt, hash ,compare} from "bcrypt";
 import mongoose from "mongoose";
-
+import Jwt from "jsonwebtoken";
 const userSchema = new mongoose.Schema({
     email:{
         type:String,
@@ -11,17 +11,9 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:[true,"Password is Required"],
     },
-    userName: {
-        type: String,
-        required: [true, "Username is required"],
-        unique: true,
-        minlength: [3, "Username must be at least 3 characters long"],
-        maxlength: [30, "Username cannot exceed 30 characters"],
-        match: [/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"]
-    },
     displayName:{
         type:String,
-        required:[true,"Your Name is Required"],
+        required:false,
     },
     image:{
         type:String,
@@ -40,13 +32,30 @@ const userSchema = new mongoose.Schema({
 
 
 userSchema.pre("save",async function(next) {
-    const salt = genSalt();
+    const salt = await genSalt();
     this.password = await hash(this.password,salt);
     next();
 });
 
 
-const User = mongoose.model("Users",userSchema);
+userSchema.methods.isPasswordCorrect = async function(password){
+    return await  compare(password,this.password);
+ }
+
+
+ userSchema.methods.generateAccessToken = async function(){
+    return Jwt.sign(
+      {
+        _id: this._id,
+      },
+      process.env.JWT_KEY,
+      {
+        expiresIn: process.env.EXPIRY,
+      }
+    );
+}
+
+const User = mongoose.model("User",userSchema);
 
 
 export default User;

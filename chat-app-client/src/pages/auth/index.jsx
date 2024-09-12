@@ -5,7 +5,9 @@ import { Tabs, TabsContent, TabsTrigger } from '@/components/ui/tabs';
 import { TabsList } from '@radix-ui/react-tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-
+import { toast } from 'sonner';
+import { apiClient } from '@/lib/apiClient.js'
+import { HOST, SIGNUP_ROUTE } from '@/utils/constant';
 function Auth() {
 
   const [email, setEmail] = useState('');
@@ -13,12 +15,33 @@ function Auth() {
   const [confirmPassword, setConfirmPassword] = useState('')
 
 
+
+  const validateSignup = () => {
+    if (!email.length) {
+      toast.error('Email Cannot be null')
+      return false
+    }
+
+    if (!password.length) {
+      toast.error('Password Cannot be null')
+      return false
+    }
+
+    if (password !== confirmPassword) {
+      toast.error('Password and Confirm Password do not match')
+      return false
+    }
+    return true
+  }
   const handleLogin = async () => {
 
   }
 
   const handleSignUp = async () => {
-
+    if (validateSignup()) {      
+      const response = await apiClient.post(SIGNUP_ROUTE,{email,password,confirmPassword});
+      console.log(response)
+    }
   }
   return (
     <div className='h-[100vh] w-[100vw] flex items-center justify-center'>
@@ -93,14 +116,14 @@ function Auth() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
 
-                <Button className=' rounded-full p-6  bg-black  text-white transition duration-300 ease-in-out  hover:bg-gray-300  hover:text-gray-800' onClick={handleSignUp}>Login</Button>
+                <Button className=' rounded-full p-6  bg-black  text-white transition duration-300 ease-in-out  hover:bg-gray-300  hover:text-gray-800' onClick={handleSignUp}>Signup</Button>
               </TabsContent>
             </Tabs>
           </div>
         </div>
 
         <div className='hidden xl:flex justify-center items-center'>
-          <img src={BackgroundImage} alt="Login Image"  className='h-[320px]'/>
+          <img src={BackgroundImage} alt="Login Image" className='h-[320px]' />
         </div>
       </div>
     </div>
