@@ -10,3 +10,6 @@ export const AUTH_URL = '/api/auth'
 export const SIGNUP_ROUTE = `${AUTH_URL}/signup`
 export const LOGIN_ROUTE = `${AUTH_URL}/login`
 
+
+export const GET_USER_INFO = `${AUTH_URL}/getUserInfo`
+export const UPDATE_PROFILE_ROUTE  = `${AUTH_URL}/updateProfile`

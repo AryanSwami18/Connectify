@@ -8,8 +8,11 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { apiClient } from '@/lib/apiClient.js'
 import { HOST, LOGIN_ROUTE, SIGNUP_ROUTE } from '@/utils/constant';
+import { useNavigate } from 'react-router-dom';
+import { useAppStore } from '@/store';
 function Auth() {
-
+  const {setUserInfo} = useAppStore();
+  const navigate = useNavigate()
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -24,6 +27,8 @@ function Auth() {
       toast.error('Password Cannot be null')
       return false
     }
+
+    return true
   }
 
   const validateSignup = () => {
@@ -44,10 +49,23 @@ function Auth() {
     return true
   }
   const handleLogin = async () => {
-      if(validateLogin){
+      if(validateLogin()){
         const response = await apiClient.post(LOGIN_ROUTE,{email,password},{withCredentials:true})
         console.log(response);
-        
+
+        if(response.status === 200 && response.data.user._id){
+          setUserInfo(response.data.user)
+          if(response.data.user.profileSetup){
+            console.log("in chat ");
+            
+            navigate("/chat")
+          }
+          else{
+            console.log("in  Profile");
+            
+            navigate("/profile")
+          }
+        }
       }
   }
 
@@ -55,7 +73,13 @@ function Auth() {
     if (validateSignup()) {      
       const response = await apiClient.post(SIGNUP_ROUTE,{email,password,confirmPassword},{withCredentials:true});
       console.log(response)
+
+      if(response.status  === 200){
+        setUserInfo(response.data.user)
+        navigate("/profile");
+      }
     }
+    
   }
   return (
     <div className='h-[100vh] w-[100vw] flex items-center justify-center'>
@@ -70,7 +94,7 @@ function Auth() {
           </div>
 
           <div className='flex items-center justify-center w-full'>
-            <Tabs className='w-4/4'>
+            <Tabs className='w-4/4' defaultValue='login'>
               <TabsList className='flex border-b border-gray-300 bg-transparent w-full'>
                 <TabsTrigger
                   value="login"

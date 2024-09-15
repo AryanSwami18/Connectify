@@ -35,10 +35,10 @@ export const signup = asyncHandler(async (req, res, next) => {
             return next(new ApiError(500, "Something Went Wrong While Creating the User"));
         }
 
-        res.cookie("jwt", createdUser.generateAccessToken(), {
-            maxAge: process.env.EXPIRY,
-            secure: true,
-            sameSite: 'none'
+        res.cookie("jwt", await user.generateAccessToken(), {
+            maxAge: parseInt(process.env.COOKIE_EXPIRY),
+            httpOnly: true,
+            sameSite: 'strict'
         });
         return res
             .status(201)
@@ -71,12 +71,11 @@ export const login = asyncHandler(async (req, res, next) => {
             return next(new ApiError(400, "Password is incorrect"));
         }
 
-        res.cookie("jwt", user.generateAccessToken(), {
-            maxAge: process.env.EXPIRY,
-            secure: true,
-            sameSite: 'none'
+        res.cookie("jwt", await user.generateAccessToken(), {
+            maxAge: parseInt(process.env.COOKIE_EXPIRY),
+            httpOnly: true,
+            sameSite: 'strict' // Adjust based on your needs
         });
-
 
 
         // Omit password field before sending user data
@@ -90,6 +89,61 @@ export const login = asyncHandler(async (req, res, next) => {
 
 
     } catch (error) {
+        next(error);
+    }
+});
 
+
+export const getUserInfo = asyncHandler(async (req, res, next) => {
+    try {
+        const user = req.user;
+        // Send response to frontend
+        return res.status(200).json({
+            message: "user fetched",
+            user: user
+        });
+    } catch (error) {
+        next(error)
+    }
+
+});
+
+
+export const updateUserProfile = asyncHandler(async(req,res,next)=>{
+    try {
+        const user = req.user;
+        const {displayName,selectedColor} = req.body;
+        if(!displayName ||  selectedColor === undefined){
+            return next(new ApiError(400, "Name And color  is Required"));
+        }
+
+        if (!/^[A-Za-z ]+$/.test(displayName)) {
+            return next(new ApiError(400, "Name should not contain any numbers or special characters"));
+        }
+
+        
+
+        const updatedUser = await User.findByIdAndUpdate(
+            user._id,
+            {
+                displayName: displayName,
+                color: selectedColor,
+                profileSetup: true
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        ).select('-password'); 
+        console.log(updatedUser);
+        
+
+        return res.status(200).json({
+            message: "User Profile Updated",
+            user: updatedUser
+        });
+
+    } catch (error) {
+        next(error)
     }
 });
