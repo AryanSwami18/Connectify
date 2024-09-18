@@ -2,7 +2,8 @@ import User from "../models/UserModel.js";
 import { ApiError } from "../utils/APIError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-
+import { uploadOnCloudinary, deleteFromCloudinary } from '../utils/cloudinary.js'
+import sharp from 'sharp';
 
 
 
@@ -109,11 +110,11 @@ export const getUserInfo = asyncHandler(async (req, res, next) => {
 });
 
 
-export const updateUserProfile = asyncHandler(async(req,res,next)=>{
+export const updateUserProfile = asyncHandler(async (req, res, next) => {
     try {
-        const user = req.user;
-        const {displayName,selectedColor} = req.body;
-        if(!displayName ||  selectedColor === undefined){
+        const userId = req.user._id;
+        const { displayName, selectedColor } = req.body;
+        if (!displayName || selectedColor === undefined) {
             return next(new ApiError(400, "Name And color  is Required"));
         }
 
@@ -121,10 +122,10 @@ export const updateUserProfile = asyncHandler(async(req,res,next)=>{
             return next(new ApiError(400, "Name should not contain any numbers or special characters"));
         }
 
-        
+
 
         const updatedUser = await User.findByIdAndUpdate(
-            user._id,
+            userId,
             {
                 displayName: displayName,
                 color: selectedColor,
@@ -134,9 +135,9 @@ export const updateUserProfile = asyncHandler(async(req,res,next)=>{
                 new: true,
                 runValidators: true
             }
-        ).select('-password'); 
+        ).select('-password');
         console.log(updatedUser);
-        
+
 
         return res.status(200).json({
             message: "User Profile Updated",
@@ -147,3 +148,78 @@ export const updateUserProfile = asyncHandler(async(req,res,next)=>{
         next(error)
     }
 });
+
+// optimize this code 
+export const uploadProfileImage = asyncHandler(async (req, res, next) => {
+    try {
+        const profileImageLocalPath = req.file?.path;
+        const user = req.user
+        if (!profileImageLocalPath) {
+            return next(new ApiError(400, 'Profile Image is required'))
+        }
+
+
+        const profileImage = await uploadOnCloudinary(profileImageLocalPath);
+
+
+        if (!profileImage.url) {
+            return next(new ApiError(500, 'Could not upload The image please try again later '))
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            user?._id,
+            {
+                $set: {
+                    image: profileImage.url,
+                },
+            },
+            { new: true }
+        ).select("-password");
+
+
+        return res.status(200).json({
+            message: "User Profile Image Updated",
+            user: updatedUser
+        });
+
+    } catch (error) {
+        next(error)
+    }
+});
+
+// optimize this code 
+export const deleteProfileImage = asyncHandler(async (req, res, next) => {
+    let deleteImageFromCloud
+    try {
+        const user = req.user;
+
+        if (!user.image) {
+            return next(new ApiError(400, 'Image not found to delete'))
+        }
+
+        deleteImageFromCloud = await deleteFromCloudinary(user.image)
+
+        if (!deleteImageFromCloud) {
+            return next(new ApiError(400, 'Could Not delete The Image Please Try Again Later'))
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            user?._id,
+            {
+                $set: {
+                    image: null,
+                },
+            },
+            { new: true }
+        ).select("-password");
+
+        return res.status(200).json({
+            message: "User Profile Image Updated",
+            user: updatedUser
+        });
+
+    } catch (error) {
+        console.log(error);
+        next(error)
+    }
+})

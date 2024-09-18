@@ -20,6 +20,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(errorMiddleware);
 
+
 app.use('/api/auth',authRoute)
 
 const port = process.env.PORT || 3001;

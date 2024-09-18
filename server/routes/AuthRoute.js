@@ -1,10 +1,13 @@
 import {Router} from 'express'
-import { getUserInfo, login, signup ,updateUserProfile} from '../controllers/AuthController.js';
+import { deleteProfileImage, getUserInfo, login, signup ,updateUserProfile,uploadProfileImage} from '../controllers/AuthController.js';
 import { verifyToken } from '../middlewares/AuthMiddleware.js';
+import { upload } from '../middlewares/MulterMiddleware.js';
 const authRoute = Router();
 
 authRoute.post("/signup",signup);
 authRoute.post("/login",login)
 authRoute.get('/getUserInfo',verifyToken,getUserInfo)
 authRoute.post('/updateProfile',verifyToken,updateUserProfile)
+authRoute.post('/uploadProfilePicture',verifyToken,upload.single("profileImage"),uploadProfileImage)
+authRoute.post('/deleteProfileImage',verifyToken,deleteProfileImage)
 export default authRoute;

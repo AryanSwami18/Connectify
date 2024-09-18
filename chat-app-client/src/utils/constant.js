@@ -12,4 +12,10 @@ export const LOGIN_ROUTE = `${AUTH_URL}/login`
 
 
 export const GET_USER_INFO = `${AUTH_URL}/getUserInfo`
-export const UPDATE_PROFILE_ROUTE  = `${AUTH_URL}/updateProfile`
+export const UPDATE_PROFILE_ROUTE = `${AUTH_URL}/updateProfile`
+
+export const PROFILE_PICTURE_UPLOAD_ROUTE = `${AUTH_URL}/uploadProfilePicture`
+export const PROFILE_PICTURE_DELETE_ROUTE = `${AUTH_URL}/deleteProfileImage`
+
+
+
