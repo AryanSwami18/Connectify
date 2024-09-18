@@ -44,7 +44,7 @@ function Profile() {
     return true
   }
 
-  const saveChanges = async () => { 
+  const saveChanges = async () => {
     if (validateProfile()) {
       try {
         const response = await apiClient.post(UPDATE_PROFILE_ROUTE, { displayName, selectedColor }, { withCredentials: true })
@@ -52,7 +52,7 @@ function Profile() {
           setUserInfo({ ...response.data.user })
           toast.success("Profile Updated")
           navigate('/chat')
-        }        
+        }
       } catch (error) {
         console.log(error);
       }
@@ -99,8 +99,8 @@ function Profile() {
     setLoading(true); // Set loading to true
     try {
       const response = await apiClient.post(PROFILE_PICTURE_DELETE_ROUTE, null, {
-        withCredentials: true 
-    });
+        withCredentials: true
+      });
       if (response.status === 200 && !response.data.user.image) {
         setUserInfo(response.data.user)
         setImage(''); // Update the image state
@@ -108,9 +108,9 @@ function Profile() {
       }
     } catch (error) {
       console.log(error);
-        toast.error('Failed to delete image');
+      toast.error('Failed to delete image');
     }
-    finally{
+    finally {
       setLoading(false); // Reset loading state
     }
   }
@@ -139,7 +139,7 @@ function Profile() {
 
             {loading && (
               <div className='absolute inset-0 flex items-center justify-center bg-black/70 rounded-full'>
-                <span className='text-white'>Loading...</span> 
+                <span className='text-white'>Loading...</span>
               </div>
             )}
 
@@ -177,14 +177,17 @@ function Profile() {
               />
             </div>
 
-            <div className='w-full flex gap-5 '>
-              {colorCombinations.map((color, index) => (
-                <div
-                  className={`${color} h-8 w-8 rounded-full cursor-pointer transition-all duration-300 m-2 sm:m-0 ${selectedColor === index ? 'outline outline-white outline-4' : ''}`}
-                  key={index}
-                  onClick={() => setSelectedColor(index)}
-                ></div>
-              ))}
+            <div className='w-full flex gap-5'>
+              {colorCombinations.map((color, index) => {
+                const isDisabled = !!image; // Check if the image is set
+                return (
+                  <div
+                    className={`${color} h-8 w-8 rounded-full cursor-pointer transition-all duration-300 m-2 sm:m-0 ${selectedColor === index ? 'outline outline-white outline-4' : ''} ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    key={index}
+                    onClick={!isDisabled ? () => setSelectedColor(index) : null} // Disable the click handler
+                  ></div>
+                );
+              })}
             </div>
           </div>
         </div>
