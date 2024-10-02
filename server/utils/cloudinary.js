@@ -35,7 +35,7 @@ const uploadOnCloudinary = async (localFilePath) => {
   }
 };
 
-//TODO: Make Method To delete from cloudinary 
+
 const deleteFromCloudinary = async(url)=>{
 
   try {
@@ -48,7 +48,6 @@ const deleteFromCloudinary = async(url)=>{
     return true
   } catch (error) {
     console.log(error);
-    
     return false;
   }
 };

@@ -1,5 +1,5 @@
 import User from "../models/UserModel.js";
-import { ApiError } from "../utils/APIError.js";
+import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary, deleteFromCloudinary } from '../utils/cloudinary.js'
@@ -149,7 +149,7 @@ export const updateUserProfile = asyncHandler(async (req, res, next) => {
     }
 });
 
-// optimize this code 
+
 export const uploadProfileImage = asyncHandler(async (req, res, next) => {
     try {
         const profileImageLocalPath = req.file?.path;
