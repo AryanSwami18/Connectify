@@ -179,12 +179,12 @@ function Profile() {
 
             <div className='w-full flex gap-5'>
               {colorCombinations.map((color, index) => {
-                const isDisabled = !!image; // Check if the image is set
+                const isDisabled = !!image; 
                 return (
                   <div
                     className={`${color} h-8 w-8 rounded-full cursor-pointer transition-all duration-300 m-2 sm:m-0 ${selectedColor === index ? 'outline outline-white outline-4' : ''} ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                     key={index}
-                    onClick={!isDisabled ? () => setSelectedColor(index) : null} // Disable the click handler
+                    onClick={!isDisabled ? () => setSelectedColor(index) : null} 
                   ></div>
                 );
               })}

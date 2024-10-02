@@ -1,3 +1,4 @@
+import animationData from '@/assets/Loader-Eighteen.json'
 export const colorCombinations = [
     'bg-blue-500 border border-blue-700 text-white',
     'bg-green-300 border border-green-500 text-gray-800',
@@ -7,8 +8,15 @@ export const colorCombinations = [
 
   
   export const getColor = (color) =>{
-        if(color => 0 &&  colro <= colorCombinations.length){
+        if(color => 0 &&  color <= colorCombinations.length){
             return colorCombinations[color]
         }
             return colorCombinations[0]
+  }
+
+
+  export const animationDefaultOption = {
+    loop:true,
+    autoplay:true,
+    animationData:animationData
   }
