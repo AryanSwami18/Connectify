@@ -75,7 +75,7 @@ export const login = asyncHandler(async (req, res, next) => {
         res.cookie("jwt", await user.generateAccessToken(), {
             maxAge: parseInt(process.env.COOKIE_EXPIRY),
             httpOnly: true,
-            sameSite: 'strict' // Adjust based on your needs
+            sameSite: 'strict' 
         });
 
 
@@ -91,6 +91,22 @@ export const login = asyncHandler(async (req, res, next) => {
 
     } catch (error) {
         next(error);
+    }
+});
+
+
+export const  logout = asyncHandler(async(req,res,next)=>{
+    try {
+        res.clearCookie("jwt", {
+            maxAge: parseInt(process.env.COOKIE_EXPIRY),
+            httpOnly: true,
+            sameSite: 'strict' 
+        });
+        res.status(200).json({
+            message: "Logged out successfully"
+        })
+    } catch (error) {
+        next(error)
     }
 });
 
