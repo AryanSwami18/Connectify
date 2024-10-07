@@ -41,9 +41,10 @@ export const signup = asyncHandler(async (req, res, next) => {
             httpOnly: true,
             sameSite: 'strict'
         });
-        return res
-            .status(201)
-            .json(new ApiResponse(200, createdUser, "User registered Succesfully"));
+        return res.status(200).json({
+            message:'user created succesfully',
+            user:createdUser
+        })
     } catch (error) {
         next(error);
     }
@@ -79,7 +80,6 @@ export const login = asyncHandler(async (req, res, next) => {
         });
 
 
-        // Omit password field before sending user data
         const { password: _, ...userWithoutPassword } = user.toObject();
 
         // Send response to frontend

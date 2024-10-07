@@ -80,9 +80,10 @@ function Profile() {
       setLoading(true); // Set loading to true
       try {
         const response = await apiClient.post(PROFILE_PICTURE_UPLOAD_ROUTE, formData, { withCredentials: true })
+        console.log(response);
         if (response.status === 200 && response.data.user.image) {
           setUserInfo(response.data.user)
-          setImage(response.data.image); // Update the image state
+          setImage(response.data.user.image);
           toast.success('Image Updated Successfully')
         }
       } catch (error) {

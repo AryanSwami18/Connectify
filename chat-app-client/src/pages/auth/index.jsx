@@ -50,36 +50,40 @@ function Auth() {
   }
   const handleLogin = async () => {
       if(validateLogin()){
-        const response = await apiClient.post(LOGIN_ROUTE,{email,password},{withCredentials:true})
-        console.log(response);
-
-        if(response.status === 200 && response.data.user._id){
-          setUserInfo(response.data.user)
-          if(response.data.user.profileSetup){
-            console.log("in chat ");
-            
-            navigate("/chat")
+        try {
+          const response = await apiClient.post(LOGIN_ROUTE,{email,password},{withCredentials:true})
+          console.log(response);
+  
+          if(response.status === 200 && response.data.user._id){
+            setUserInfo(response.data.user)
+            if(response.data.user.profileSetup){            
+              navigate("/chat")
+            }
+            else{
+              navigate("/profile")
+            }
           }
-          else{
-            console.log("in  Profile");
-            
-            navigate("/profile")
-          }
+        } catch (error) {
+          toast.error(error.response.data.message)
         }
       }
   }
 
   const handleSignUp = async () => {
     if (validateSignup()) {      
-      const response = await apiClient.post(SIGNUP_ROUTE,{email,password,confirmPassword},{withCredentials:true});
-      console.log(response)
-
-      if(response.status  === 200){
-        setUserInfo(response.data.user)
-        navigate("/profile");
-      }
+     try {
+       const response = await apiClient.post(SIGNUP_ROUTE,{email,password,confirmPassword},{withCredentials:true});
+       console.log(response);
+       
+       if(response.status  === 200){
+         console.log('hello');
+         setUserInfo(response.data.user)
+         navigate("/profile");
+       }
+     } catch (error) {
+        toast.error(error.response.data.message)
+     }
     }
-    
   }
   return (
     <div className='h-[100vh] w-[100vw] flex items-center justify-center'>

@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import authRoute from './routes/AuthRoute.js';
 import errorMiddleware from './middlewares/errorMiddleware.js';
 import contactRoute from './routes/ContactRoute.js';
+import setupSocket from './socket.js';
 dotenv.config();
 
 const app = express();
@@ -32,9 +33,11 @@ const databaseURL = process.env.DATABASE_URL;
 mongoose.connect(databaseURL)
     .then(() => {
         console.log('DB connection successful');
-        app.listen(port, () => {
+        const server = app.listen(port, () => {
             console.log(`Server started at http://localhost:${port}`);
         });
+
+        setupSocket(server)
     })
     .catch((err) => {
         console.error('DB connection error:', err.message);

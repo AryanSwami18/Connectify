@@ -28,7 +28,7 @@ export const searchContacts = asyncHandler(async (req, res, next) => {
                 ]
             }
         ]
-    }).limit(20).select("-password  -profileSetup"); // Optional: Limit the number of contacts returned
+    }).limit(20).select("-password  -profileSetup");
 
     // Return the found contacts
     res.status(200).json({
