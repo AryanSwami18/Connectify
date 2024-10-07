@@ -1,6 +1,8 @@
 import User from '../models/UserModel.js'
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from '../utils/ApiError.js';
+import mongoose from 'mongoose';
+import Message from '../models/MessageModel.js';
 
 export const searchContacts = asyncHandler(async (req, res, next) => {
     const { search } = req.body;
@@ -20,7 +22,7 @@ export const searchContacts = asyncHandler(async (req, res, next) => {
     const contacts = await User.find({
         $and: [
             { _id: { $ne: req.user._id } },
-            {profileSetup:true},
+            { profileSetup: true },
             {
                 $or: [
                     { displayName: regex },
@@ -35,4 +37,81 @@ export const searchContacts = asyncHandler(async (req, res, next) => {
         message: 'Contacts fetched successfully',
         contacts,
     });
+});
+
+
+export const geContactsForMessageList = asyncHandler(async (req, res, next) => {
+    try {
+        let userId = req.user._id;
+        userId = new mongoose.Types.ObjectId(userId);
+        const contacts = await Message.aggregate([
+            {
+              $match: {
+                $or: [
+                  { sender: userId },
+                  { receiver: userId }
+                ]
+              }
+            },
+            {
+              $sort: { timestamp: -1 } // Sort by timestamp to get the latest messages
+            },
+            {
+              $group: {
+                _id: {
+                  $cond: {
+                    if: { $eq: ["$sender", userId] },
+                    then: "$recipient",
+                    else: "$sender"
+                  }
+                },
+                latestMessageTime: { $first: "$timestamp" },
+              }
+            },
+            {
+              $lookup: {
+                from: 'users', 
+                localField: '_id',
+                foreignField: '_id',
+                as: 'contactInfo'
+              }
+            },
+            {
+              $unwind: {
+                path: '$contactInfo',
+              }
+            },
+            {
+              $project: {
+                _id: 1,
+                latestMessageTime: 1,
+                latestMessage: 1,
+                email: "$contactInfo.email",
+                displayName: "$contactInfo.displayName",
+                image: "$contactInfo.image",
+                color: "$contactInfo.color"
+              }
+            },
+            {
+              $sort: {
+                latestMessageTime: -1 
+              }
+            }
+          ]);
+          
+          console.log('Contacts:', contacts); 
+          
+        
+        return res.status(200).json({
+            message: 'user contacts fetched succesfully',
+            contacts: contacts
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
+export const getAllContacts = asyncHandler(async(req,res,next)=>{
+    
 });
