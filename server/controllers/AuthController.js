@@ -42,8 +42,8 @@ export const signup = asyncHandler(async (req, res, next) => {
             sameSite: 'strict'
         });
         return res.status(200).json({
-            message:'user created succesfully',
-            user:createdUser
+            message: 'user created succesfully',
+            user: createdUser
         })
     } catch (error) {
         next(error);
@@ -76,7 +76,7 @@ export const login = asyncHandler(async (req, res, next) => {
         res.cookie("jwt", await user.generateAccessToken(), {
             maxAge: parseInt(process.env.COOKIE_EXPIRY),
             httpOnly: true,
-            sameSite: 'strict' 
+            sameSite: 'strict'
         });
 
 
@@ -95,12 +95,12 @@ export const login = asyncHandler(async (req, res, next) => {
 });
 
 
-export const  logout = asyncHandler(async(req,res,next)=>{
+export const logout = asyncHandler(async (req, res, next) => {
     try {
         res.clearCookie("jwt", {
             maxAge: parseInt(process.env.COOKIE_EXPIRY),
             httpOnly: true,
-            sameSite: 'strict' 
+            sameSite: 'strict'
         });
         res.status(200).json({
             message: "Logged out successfully"
@@ -152,7 +152,6 @@ export const updateUserProfile = asyncHandler(async (req, res, next) => {
                 runValidators: true
             }
         ).select('-password');
-        console.log(updatedUser);
 
 
         return res.status(200).json({

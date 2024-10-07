@@ -54,7 +54,7 @@ function Profile() {
           navigate('/chat')
         }
       } catch (error) {
-        console.log(error);
+        toast.error(error.response.data.message)
       }
     }
   }
@@ -80,14 +80,12 @@ function Profile() {
       setLoading(true); // Set loading to true
       try {
         const response = await apiClient.post(PROFILE_PICTURE_UPLOAD_ROUTE, formData, { withCredentials: true })
-        console.log(response);
         if (response.status === 200 && response.data.user.image) {
           setUserInfo(response.data.user)
           setImage(response.data.user.image);
           toast.success('Image Updated Successfully')
         }
       } catch (error) {
-        console.log(error);
         toast.error('Failed to upload image');
       } finally {
         setLoading(false); // Reset loading state
@@ -108,7 +106,6 @@ function Profile() {
         toast.success('Image Deleted  Successfully')
       }
     } catch (error) {
-      console.log(error);
       toast.error('Failed to delete image');
     }
     finally {

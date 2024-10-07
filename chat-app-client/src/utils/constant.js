@@ -5,8 +5,8 @@ export const HOST = import.meta.env.VITE_SERVER_URL;
 
 // url for all endpoints related to auth
 export const AUTH_URL = '/api/auth'
-export const CONTACT_URL = 'api/contact'
-
+export const CONTACT_URL = '/api/contact'
+export const MESSAGE_URL  = '/api/message'
 
 //all auth routes
 export const SIGNUP_ROUTE = `${AUTH_URL}/signup`
@@ -29,6 +29,13 @@ export const PROFILE_PICTURE_DELETE_ROUTE = `${AUTH_URL}/deleteProfileImage`
 
 
 export const SEARCH_CONTACTS_ROUTE = `${CONTACT_URL}/searchContacts`
+
+
+
+
+
+
+export const GET_MESSAGES = `${MESSAGE_URL}/getMessages`
 
 
 

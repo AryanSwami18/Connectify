@@ -33,7 +33,6 @@ function NewMessage() {
         try {
             if (search.length > 0) {
                 const response = await apiClient.post(SEARCH_CONTACTS_ROUTE, { search }, { withCredentials: true })
-                console.log(response);
                 if (response.status === 200) {
                     if (response.data.contacts && response.data.contacts.length > 0) {
                         setSearchedContact(response.data.contacts)

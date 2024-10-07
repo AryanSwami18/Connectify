@@ -29,7 +29,7 @@ const uploadOnCloudinary = async (localFilePath) => {
   } catch (error) {
     // removes the file  from the server  as the operation have failed to upload the file
     fs.unlinkSync(localFilePath);
-    console.log(error);
+      console.log(error);
     
     return null;
   }
@@ -47,7 +47,6 @@ const deleteFromCloudinary = async(url)=>{
     cloudinary.uploader.destroy(imageName);
     return true
   } catch (error) {
-    console.log(error);
     return false;
   }
 };

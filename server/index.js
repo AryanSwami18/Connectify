@@ -7,6 +7,7 @@ import authRoute from './routes/AuthRoute.js';
 import errorMiddleware from './middlewares/errorMiddleware.js';
 import contactRoute from './routes/ContactRoute.js';
 import setupSocket from './socket.js';
+import messageRoute from './routes/MessageRoute.js';
 dotenv.config();
 
 const app = express();
@@ -24,6 +25,7 @@ app.use(express.json());
 
 app.use('/api/auth',authRoute)
 app.use('/api/contact',contactRoute)
+app.use('/api/message',messageRoute)
 
 app.use(errorMiddleware);
 

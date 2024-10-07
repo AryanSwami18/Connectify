@@ -52,7 +52,6 @@ function Auth() {
       if(validateLogin()){
         try {
           const response = await apiClient.post(LOGIN_ROUTE,{email,password},{withCredentials:true})
-          console.log(response);
   
           if(response.status === 200 && response.data.user._id){
             setUserInfo(response.data.user)
@@ -64,6 +63,7 @@ function Auth() {
             }
           }
         } catch (error) {
+          console.log(error);
           toast.error(error.response.data.message)
         }
       }
@@ -73,10 +73,8 @@ function Auth() {
     if (validateSignup()) {      
      try {
        const response = await apiClient.post(SIGNUP_ROUTE,{email,password,confirmPassword},{withCredentials:true});
-       console.log(response);
        
        if(response.status  === 200){
-         console.log('hello');
          setUserInfo(response.data.user)
          navigate("/profile");
        }

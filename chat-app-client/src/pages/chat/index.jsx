@@ -11,7 +11,6 @@ function Chat() {
   const { userInfo,selectedChatType } = useAppStore()
   const navigate = useNavigate()
   useEffect(() => {
-    console.log(userInfo);
     if (!userInfo.profileSetup) {
       toast('Please Setup the profile before you access the chat')
       navigate('/profile')
