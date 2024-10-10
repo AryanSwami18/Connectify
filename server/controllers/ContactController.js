@@ -111,7 +111,3 @@ export const geContactsForMessageList = asyncHandler(async (req, res, next) => {
     }
 });
 
-
-export const getAllContacts = asyncHandler(async(req,res,next)=>{
-    
-});

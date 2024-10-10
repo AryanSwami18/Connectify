@@ -3,10 +3,12 @@ import React from 'react';
 import { Avatar } from '@/components/ui/avatar';
 import { AvatarImage } from '@/components/ui/avatar';
 import {getColor} from '@/utils/utils'; // Ensure to import your color function
+import moment from 'moment';
 
 function ContactList({ contacts, isChannel = false }) {
   const { setSelectedChatType, setSelectedChatData, selectedChatData, setSelectedChatMessages } = useAppStore();
-
+  console.log(contacts);
+  
   const handleClick = (contact) => {
     if (isChannel) {
       setSelectedChatType('channel');
@@ -52,6 +54,9 @@ function ContactList({ contacts, isChannel = false }) {
               <span className='font-bold'>
                 {isChannel ? `# ${contact.name}` : (contact.displayName ? contact.displayName : ' ')}
               </span>
+              {/* <span className='text-sm font-medium'>
+                {moment(contact.latestMessageTime).format("LT")}
+              </span> */}
             </div>
           </div>
         </div>

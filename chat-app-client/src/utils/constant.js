@@ -7,7 +7,7 @@ export const HOST = import.meta.env.VITE_SERVER_URL;
 export const AUTH_URL = '/api/auth'
 export const CONTACT_URL = '/api/contact'
 export const MESSAGE_URL  = '/api/message'
-
+export const GROUP_URL = '/api/group'
 //all auth routes
 export const SIGNUP_ROUTE = `${AUTH_URL}/signup`
 export const LOGIN_ROUTE = `${AUTH_URL}/login`
@@ -37,6 +37,14 @@ export const GET_MESSAGE_CONTACTS_ROUTE = `${CONTACT_URL}/getContactForMessages`
 
 export const GET_MESSAGES = `${MESSAGE_URL}/getMessages`
 
+
+
+
+
+
+export const CREATE_GROUP = `${GROUP_URL}/createGroup`
+export const GET_USER_GROUPS = `${GROUP_URL}/getAllUserGroups`
+export const GET_GROUP_MESSAGES = `${GROUP_URL}/getGroupMessages`
 
 
 

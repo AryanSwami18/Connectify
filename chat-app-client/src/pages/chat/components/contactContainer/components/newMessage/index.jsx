@@ -52,6 +52,7 @@ function NewMessage() {
         setSelectedChatType('contact')
         setSelectedChatData(contact)
         setSearchedContact([])
+        
     }
 
 

@@ -21,7 +21,6 @@ function MessageBar() {
     const handleSendMessage = async () => {
         // Logic for sending the message
         if(selectedChatType === 'contact'){
-
             socket.emit("sendMessage",{
                 sender:userInfo._id,
                 content:message,
@@ -30,8 +29,16 @@ function MessageBar() {
                 fileUrl:undefined
             })
             setMessage('')
+        }else if(selectedChatType === 'channel'){
+            socket.emit("sendGroupMessage",{
+                sender:userInfo._id,
+                content:message,
+                messageType:'text',
+                fileUrl:undefined,
+                groupId:selectedChatData._id
+            })
+            setMessage('')
         }
-
     };
 
     return (

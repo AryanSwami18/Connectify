@@ -21,7 +21,7 @@ export const getMessages = asyncHandler(async(req,res,next)=>{
         }).sort({timestamp:1})
     
     
-        res.status(200).json({
+    res.status(200).json({
             message:'all message fetched',
             messages:messages
         });

@@ -8,6 +8,7 @@ import errorMiddleware from './middlewares/errorMiddleware.js';
 import contactRoute from './routes/ContactRoute.js';
 import setupSocket from './socket.js';
 import messageRoute from './routes/MessageRoute.js';
+import groupRoute from './routes/GroupRoute.js';
 dotenv.config();
 
 const app = express();
@@ -26,6 +27,7 @@ app.use(express.json());
 app.use('/api/auth',authRoute)
 app.use('/api/contact',contactRoute)
 app.use('/api/message',messageRoute)
+app.use('/api/group',groupRoute)
 
 app.use(errorMiddleware);
 

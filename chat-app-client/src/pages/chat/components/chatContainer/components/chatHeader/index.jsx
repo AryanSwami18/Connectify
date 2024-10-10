@@ -6,38 +6,52 @@ import { AvatarImage } from '@/components/ui/avatar';
 import { getColor } from '@/utils/utils';
 
 function ChatHeader() {
-  const { closeChat, selectedChatData } = useAppStore();
+  const { closeChat, selectedChatData, selectedChatType } = useAppStore();
 
   return (
     <div className='h-[10vh] border-b-2 border-[#373747] flex items-center justify-between px-6'>
       <div className='flex gap-4 items-center'>
-        <div className='w-12 h-12 relative'>
-          <Avatar className='h-12 w-12 rounded-full overflow-hidden'>
-            {selectedChatData.image ? (
-              <AvatarImage
-                src={selectedChatData.image}
-                alt='Profile Image'
-                className='object-cover w-full h-full bg-black'
-              />
-            ) : (
-              <div
-                className={`uppercase h-full w-full text-lg flex items-center justify-center rounded-full ${getColor(
-                  selectedChatData.color
-                )}`}
-              >
-                {selectedChatData.displayName
-                  ? selectedChatData.displayName.charAt(0)
-                  : selectedChatData.email.charAt(0)}
-              </div>
-            )}
-          </Avatar>
-        </div>
+        {/* Render Avatar and displayName if it's a contact */}
+        {selectedChatType === 'contact' && (
+          <>
+            <div className='w-12 h-12 relative'>
+              <Avatar className='h-12 w-12 rounded-full overflow-hidden'>
+                {selectedChatData.image ? (
+                  <AvatarImage
+                    src={selectedChatData.image}
+                    alt='Profile Image'
+                    className='object-cover w-full h-full bg-black'
+                  />
+                ) : (
+                  <div
+                    className={`uppercase h-full w-full text-lg flex items-center justify-center rounded-full ${getColor(
+                      selectedChatData.color
+                    )}`}
+                  >
+                    {selectedChatData.displayName
+                      ? selectedChatData.displayName.charAt(0)
+                      : selectedChatData.email.charAt(0)}
+                  </div>
+                )}
+              </Avatar>
+            </div>
 
-        <div className='flex flex-col'>
-          <span className='font-bold'>
-            {selectedChatData.displayName ? selectedChatData.displayName : ' '}
-          </span>
-        </div>
+            <div className='flex flex-col'>
+              <span className='font-bold'>
+                {selectedChatData.displayName ? selectedChatData.displayName : ' '}
+              </span>
+            </div>
+          </>
+        )}
+
+        {/* If it's a channel, show the channel name */}
+        {selectedChatType === 'channel' && (
+          <div className='flex flex-col'>
+            <span className='font-bold'>
+              #{selectedChatData.name ? selectedChatData.name : 'Unnamed Channel'}
+            </span>
+          </div>
+        )}
       </div>
 
       <button

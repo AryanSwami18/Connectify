@@ -26,12 +26,24 @@ export const SocketProvider = ({ children }) => {
 
             const handleRecieveMessage = (message) => {
                 const { selectedChatData, selectedChatType ,addMessage} = useAppStore.getState()
-
+                console.log(message);
                 if (selectedChatType !== undefined && (selectedChatData._id === message.sender._id || selectedChatData._id === message.recipient._id)) {                    
                     addMessage(message)
                 }
             }
+
+            const handleReceiveGroupMessage = (message) => {
+                const { selectedChatData, selectedChatType, addMessage,selectedChatMessages } = useAppStore.getState();
+                console.log('the message has been recienved and kjbduiad');
+                console.log(message.group._id);
+                console.log(selectedChatData._id);
+                
+                if (selectedChatType === 'channel' && selectedChatData._id === message.group._id) {
+                  addMessage(message);                  
+                }
+              };
             socket.current.on('newMessage', handleRecieveMessage)
+            socket.current.on('newGroupMessage',handleReceiveGroupMessage)
             return () => {
                 if (socket.current) {
                     socket.current.disconnect();
