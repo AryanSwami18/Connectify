@@ -107,7 +107,7 @@ function NewMessage() {
                                 </div>
                             ))}
                         </div>
-
+                          
                     </ScrollArea>
                     {
                         searchedContacts.length === 0 && (

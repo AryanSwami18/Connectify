@@ -1,6 +1,6 @@
 import { Server as SocketIoServer } from "socket.io";
 import Message from "./models/MessageModel.js";
-import User from "./models/UserModel.js";
+
 
 const setupSocket = (server) => {
   const io = new SocketIoServer(server, {

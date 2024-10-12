@@ -3,13 +3,19 @@ import { RiCloseFill } from 'react-icons/ri';
 import { useAppStore } from '@/store';
 import { Avatar } from '@/components/ui/avatar';
 import { AvatarImage } from '@/components/ui/avatar';
+import { GoDeviceCameraVideo } from "react-icons/go";
 import { getColor } from '@/utils/utils';
 
 function ChatHeader() {
   const { closeChat, selectedChatData, selectedChatType } = useAppStore();
 
+
+  const handleVideoCall = async () => {
+
+  }
+
   return (
-    <div className='h-[10vh] border-b-2 border-[#373747] flex items-center justify-between px-6'>
+    <div className='h-[10vh] border-b-2 border-[#373747] flex items-center justify-between px-3'>
       <div className='flex gap-4 items-center'>
         {/* Render Avatar and displayName if it's a contact */}
         {selectedChatType === 'contact' && (
@@ -54,12 +60,30 @@ function ChatHeader() {
         )}
       </div>
 
-      <button
-        className='text-neutral-500 focus:outline-none focus:text-white transition-all duration-300'
-        onClick={closeChat}
-      >
-        <RiCloseFill className='text-3xl' />
-      </button>
+
+
+
+      <div className='flex flex-row gap-5'>
+        {
+          selectedChatType == 'contact' && (
+            <button
+              className='text-neutral-500 focus:outline-none focus:text-white transition-all duration-300 '
+              onClick={handleVideoCall}
+            >
+              <GoDeviceCameraVideo className='text-3xl' />
+            </button>
+          )
+        }
+
+
+        <button
+          className='text-neutral-500 focus:outline-none focus:text-white transition-all duration-300'
+          onClick={closeChat}
+        >
+          <RiCloseFill className='text-3xl' />
+        </button>
+      </div>
+
     </div>
   );
 }
