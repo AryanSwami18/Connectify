@@ -5,6 +5,15 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary, deleteFromCloudinary } from '../utils/cloudinary.js'
 import sharp from 'sharp';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
+const cookieOptions = {
+    maxAge: parseInt(process.env.COOKIE_EXPIRY),
+    httpOnly: true,
+    sameSite: isProduction ? 'none' : 'lax',
+    secure: isProduction,
+};
+
 
 
 // Function for Signup
@@ -16,7 +25,7 @@ export const signup = asyncHandler(async (req, res, next) => {
         }
 
         const existedUserEmail = await User.findOne({ email });
-
+        
         if (password.trim() != confirmPassword.trim()) {
             return next(new ApiError(400, 'confirm Password dose not  match'));
         }
@@ -36,11 +45,7 @@ export const signup = asyncHandler(async (req, res, next) => {
             return next(new ApiError(500, "Something Went Wrong While Creating the User"));
         }
 
-        res.cookie("jwt", await user.generateAccessToken(), {
-            maxAge: parseInt(process.env.COOKIE_EXPIRY),
-            httpOnly: true,
-            sameSite: 'strict'
-        });
+        res.cookie("jwt", await user.generateAccessToken(), cookieOptions);
         return res.status(200).json({
             message: 'user created succesfully',
             user: createdUser
@@ -73,11 +78,7 @@ export const login = asyncHandler(async (req, res, next) => {
             return next(new ApiError(400, "Password is incorrect"));
         }
 
-        res.cookie("jwt", await user.generateAccessToken(), {
-            maxAge: parseInt(process.env.COOKIE_EXPIRY),
-            httpOnly: true,
-            sameSite: 'strict'
-        });
+        res.cookie("jwt", await user.generateAccessToken(), cookieOptions);
 
 
         const { password: _, ...userWithoutPassword } = user.toObject();
@@ -97,11 +98,7 @@ export const login = asyncHandler(async (req, res, next) => {
 
 export const logout = asyncHandler(async (req, res, next) => {
     try {
-        res.clearCookie("jwt", {
-            maxAge: parseInt(process.env.COOKIE_EXPIRY),
-            httpOnly: true,
-            sameSite: 'strict'
-        });
+        res.clearCookie("jwt", cookieOptions);
         res.status(200).json({
             message: "Logged out successfully"
         })

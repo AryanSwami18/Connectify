@@ -1,11 +1,15 @@
 import { Server as SocketIoServer } from "socket.io";
 import Message from "./models/MessageModel.js";
 
+const allowedOrigins = (process.env.ORIGIN || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 const setupSocket = (server) => {
   const io = new SocketIoServer(server, {
     cors: {
-      origin: process.env.ORIGIN, // Make sure this is well-defined
+      origin: allowedOrigins, 
       methods: ['GET', 'POST'],
       credentials: true,
     },
@@ -20,6 +24,13 @@ const setupSocket = (server) => {
         userSocketMap.delete(userId);
         break;
       }
+    }
+  };
+
+  const emitToUser = (userId, event, payload) => {
+    const socketId = userSocketMap.get(userId?.toString());
+    if (socketId) {
+      io.to(socketId).emit(event, payload);
     }
   };
 
@@ -81,6 +92,36 @@ const setupSocket = (server) => {
         }
   }
 
+  const handleCallUser = ({ to, from, fromUser, offer }) => {
+    emitToUser(to, 'incoming-call', {
+      from,
+      fromUser,
+      offer,
+    });
+  };
+
+  const handleAnswerCall = ({ to, from, answer }) => {
+    emitToUser(to, 'call-answered', {
+      from,
+      answer,
+    });
+  };
+
+  const handleIceCandidate = ({ to, from, candidate }) => {
+    emitToUser(to, 'ice-candidate', {
+      from,
+      candidate,
+    });
+  };
+
+  const handleDeclineCall = ({ to, from }) => {
+    emitToUser(to, 'call-declined', { from });
+  };
+
+  const handleEndCall = ({ to, from }) => {
+    emitToUser(to, 'call-ended', { from });
+  };
+
   // Handling new connections
   io.on('connection', (socket) => {
     const userId = socket.handshake.query.userId;
@@ -93,6 +134,11 @@ const setupSocket = (server) => {
 
     socket.on('sendMessage',sentMessage)
     socket.on('sendGroupMessage',sentGroupMessage)
+    socket.on('call-user', handleCallUser)
+    socket.on('answer-call', handleAnswerCall)
+    socket.on('ice-candidate', handleIceCandidate)
+    socket.on('decline-call', handleDeclineCall)
+    socket.on('end-call', handleEndCall)
 
     // Listen for disconnect events and handle accordingly
     socket.on('disconnect', () => {

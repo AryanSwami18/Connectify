@@ -12,9 +12,13 @@ import groupRoute from './routes/GroupRoute.js';
 dotenv.config();
 
 const app = express();
+const allowedOrigins = (process.env.ORIGIN || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 
 app.use(cors({
-    origin:[process.env.ORIGIN],
+    origin: allowedOrigins,
     methods:['GET','POST','PUT','PATCH','DELETE'],
     credentials:true
 }));

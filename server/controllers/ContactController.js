@@ -49,7 +49,7 @@ export const geContactsForMessageList = asyncHandler(async (req, res, next) => {
               $match: {
                 $or: [
                   { sender: userId },
-                  { receiver: userId }
+                  { recipient: userId }
                 ]
               }
             },
@@ -66,6 +66,8 @@ export const geContactsForMessageList = asyncHandler(async (req, res, next) => {
                   }
                 },
                 latestMessageTime: { $first: "$timestamp" },
+                latestMessage: { $first: "$content" },
+                latestMessageType: { $first: "$messageType" },
               }
             },
             {
@@ -86,10 +88,12 @@ export const geContactsForMessageList = asyncHandler(async (req, res, next) => {
                 _id: 1,
                 latestMessageTime: 1,
                 latestMessage: 1,
+                latestMessageType: 1,
                 email: "$contactInfo.email",
                 displayName: "$contactInfo.displayName",
                 image: "$contactInfo.image",
-                color: "$contactInfo.color"
+                color: "$contactInfo.color",
+                unreadCount: { $literal: 0 }
               }
             },
             {
