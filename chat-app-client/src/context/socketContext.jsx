@@ -20,13 +20,17 @@ export const SocketProvider = ({ children }) => {
     useEffect(() => {
         if (userInfo) {
             // Initialize the socket connection
-            socket.current = io(HOST, { withCredentials: true, query: { userId: userInfo._id } });
+            socket.current = io(HOST, { withCredentials: true });
             setSocketInstance(socket.current);
 
             socket.current.on("connect", () => {
                 console.log('connected');
                 
             });
+
+            const handleConnectError = () => {
+                toast.error("Realtime connection failed. Please log in again.");
+            };
 
             const updateDirectMessageContacts = (message) => {
                 const {
@@ -127,6 +131,7 @@ export const SocketProvider = ({ children }) => {
             socket.current.on('incoming-call', handleIncomingCall)
             socket.current.on('call-declined', handleCallDeclined)
             socket.current.on('call-ended', handleCallEnded)
+            socket.current.on('connect_error', handleConnectError)
             return () => {
                 const currentSocket = socket.current;
                 if (currentSocket) {
@@ -135,6 +140,7 @@ export const SocketProvider = ({ children }) => {
                     currentSocket.off('incoming-call', handleIncomingCall);
                     currentSocket.off('call-declined', handleCallDeclined);
                     currentSocket.off('call-ended', handleCallEnded);
+                    currentSocket.off('connect_error', handleConnectError);
                     currentSocket.disconnect();
                 }
                 socket.current = null;
