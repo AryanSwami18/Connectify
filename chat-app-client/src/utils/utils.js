@@ -8,7 +8,7 @@ export const colorCombinations = [
 
   
   export const getColor = (color) =>{
-        if(color => 0 &&  color <= colorCombinations.length){
+        if(color >= 0 &&  color < colorCombinations.length){
             return colorCombinations[color]
         }
             return colorCombinations[0]

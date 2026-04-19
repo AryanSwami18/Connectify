@@ -5,7 +5,7 @@ import MessageBar from './components/messageBar'
 
 function ChatContainer() {
   return (
-    <div className='flex flex-col top-0 h-[100vh] w-[100vw] bg-[#1c1d25]'>
+    <div className='flex h-full min-w-0 flex-1 flex-col bg-[#1c1d25]'>
       <ChatHeader/>
       <MessageContainer className='flex-1'/>
       <MessageBar/>

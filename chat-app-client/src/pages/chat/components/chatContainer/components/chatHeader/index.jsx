@@ -24,13 +24,12 @@ function ChatHeader() {
     startOutgoingVideoCall(selectedChatData)
   }
   return (
-    <div className='h-[10vh] border-b-2 border-[#373747] flex items-center justify-between px-3'>
-      <div className='flex gap-4 items-center'>
-        {/* Render Avatar and displayName if it's a contact */}
+    <div className='flex min-h-16 items-center justify-between gap-3 border-b border-[#373747] px-3 py-3 sm:px-5'>
+      <div className='flex min-w-0 items-center gap-3 sm:gap-4'>
         {selectedChatType === 'contact' && (
           <>
-            <div className='w-12 h-12 relative'>
-              <Avatar className='h-12 w-12 rounded-full overflow-hidden'>
+            <div className='relative h-10 w-10 sm:h-12 sm:w-12'>
+              <Avatar className='h-10 w-10 rounded-full overflow-hidden sm:h-12 sm:w-12'>
                 {selectedChatData.image ? (
                   <AvatarImage
                     src={selectedChatData.image}
@@ -51,45 +50,47 @@ function ChatHeader() {
               </Avatar>
             </div>
 
-            <div className='flex flex-col'>
-              <span className='font-bold'>
+            <div className='min-w-0 flex flex-col'>
+              <span className='truncate font-bold'>
                 {selectedChatData.displayName ? selectedChatData.displayName : ' '}
+              </span>
+              <span className='truncate text-xs text-neutral-400'>
+                {selectedChatData.email || 'Direct message'}
               </span>
             </div>
           </>
         )}
 
-        {/* If it's a channel, show the channel name */}
         {selectedChatType === 'channel' && (
-          <div className='flex flex-col'>
-            <span className='font-bold'>
+          <div className='min-w-0 flex flex-col'>
+            <span className='truncate font-bold'>
               #{selectedChatData.name ? selectedChatData.name : 'Unnamed Channel'}
             </span>
+            <span className='text-xs text-neutral-400'>Group chat</span>
           </div>
         )}
       </div>
 
-
-
-
-      <div className='flex flex-row gap-5'>
+      <div className='flex flex-row gap-2 sm:gap-4'>
         {
-          selectedChatType == 'contact' && (
+          selectedChatType === 'contact' && (
             <button
-              className='text-neutral-500 focus:outline-none focus:text-white transition-all duration-300 '
+              type='button'
+              className='rounded-lg p-2 text-neutral-500 transition-all duration-300 hover:bg-white/5 focus:outline-none focus:text-white'
               onClick={startVideoCall}
             >
-              <GoDeviceCameraVideo className='text-3xl' />
+              <GoDeviceCameraVideo className='text-2xl sm:text-3xl' />
             </button>
           )
         }
 
 
         <button
-          className='text-neutral-500 focus:outline-none focus:text-white transition-all duration-300'
+          type='button'
+          className='rounded-lg p-2 text-neutral-500 transition-all duration-300 hover:bg-white/5 focus:outline-none focus:text-white'
           onClick={closeChat}
         >
-          <RiCloseFill className='text-3xl' />
+          <RiCloseFill className='text-2xl sm:text-3xl' />
         </button>
       </div>
 

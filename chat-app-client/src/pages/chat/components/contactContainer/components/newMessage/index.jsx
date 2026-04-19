@@ -8,13 +8,10 @@ import {
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { animationDefaultOption } from "@/utils/utils";
-import Lottie from "react-lottie";
 import { FaPlus } from 'react-icons/fa'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner';
@@ -24,6 +21,7 @@ import { useAppStore } from '@/store';
 import { Avatar } from '@/components/ui/avatar';
 import { getColor } from '@/utils/utils';
 import { AvatarImage } from '@/components/ui/avatar';
+
 function NewMessage() {
     const {setSelectedChatType,setSelectedChatData} = useAppStore()
     const [openNewContactModal, setOpenNewContactModal] = useState(false)
@@ -60,7 +58,15 @@ function NewMessage() {
         <>
             <TooltipProvider>
                 <Tooltip>
-                    <TooltipTrigger><FaPlus className='text-neutral-400 text-sm font-light text-opacity-90  text-start hover:text-neutral-200  cursor-pointer transition-all duration-300' onClick={() => { setOpenNewContactModal(true) }} /></TooltipTrigger>
+                    <TooltipTrigger asChild>
+                        <button
+                            type='button'
+                            className='text-neutral-400 text-sm font-light text-opacity-90 text-start hover:text-neutral-200 cursor-pointer transition-all duration-300'
+                            onClick={() => { setOpenNewContactModal(true) }}
+                        >
+                            <FaPlus />
+                        </button>
+                    </TooltipTrigger>
                     <TooltipContent className='bg-[#1c1b1e] border-none text-white rounded-sm' >
                         New Message
                     </TooltipContent>
@@ -69,20 +75,18 @@ function NewMessage() {
 
 
             <Dialog open={openNewContactModal} onOpenChange={setOpenNewContactModal} >
-                <DialogContent className='bg-[#181920] border-none text-white w-[400px] h-[400px] flex flex-col'>
+                <DialogContent className='bg-[#181920] border-none text-white w-[calc(100vw-2rem)] max-w-md h-[min(32rem,85vh)] flex flex-col gap-4 rounded-2xl p-5 sm:p-6'>
                     <DialogHeader>
                         <DialogTitle>Select a contact</DialogTitle>
-                        <DialogDescription>
-                        </DialogDescription>
                     </DialogHeader>
                     <div>
                         <Input
                             placeholder='Search Contact'
-                            className='rounded-lg border-none bg-[#2c2e3b] !important'
+                            className='rounded-lg border-none bg-[#2c2e3b]'
                             onChange={(e) => searchContact(e.target.value)}
                         />
                     </div>
-                    <ScrollArea className='h-[250px]'>
+                    <ScrollArea className='h-[250px] pr-3 sm:h-[300px]'>
                         <div className="flex flex-col gap-5">
                             {searchedContacts.map((contact) => (
                                 <div key={contact._id} className='flex gap-3 items-center cursor-pointer '
@@ -92,7 +96,7 @@ function NewMessage() {
                                             {contact.image ? (
                                                 <AvatarImage src={contact.image} alt='Profile Image' className='object-cover w-full h-full bg-black' />
                                             ) : (
-                                                <div className={`uppercase h-32 w-32 md:w-48 md:h-48 text-lg flex items-center justify-center rounded-full ${getColor(contact.color)}`}>
+                                                <div className={`uppercase h-full w-full text-lg flex items-center justify-center rounded-full ${getColor(contact.color)}`}>
                                                     {contact.displayName ? contact.displayName.split('').shift() : contact.email.split('').shift()}
                                                 </div>
                                             )}
@@ -111,14 +115,16 @@ function NewMessage() {
                     </ScrollArea>
                     {
                         searchedContacts.length === 0 && (
-                            <div className='flex-1 md: md:flex flex-col justify-center items-center hidden duration-1000 transition-all'>
-
-                                <Lottie options={animationDefaultOption} height={70} width={70} />
-                                <div className="text-opacity-80 text-white flex flex-col gap-5 items-center mt-10 lg:text-4xl text-3xl transition-all duration-300 text-center">
-                                    <h1 className="text-xl font-bold poppins-medium">
-                                        Search New <span className="text-purple-500">Contacts</span>
-                                    </h1>
+                            <div className='flex flex-1 flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.03] px-6 text-center'>
+                                <div className='mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#2c2e3b] text-2xl text-neutral-300'>
+                                    <FaPlus />
                                 </div>
+                                <h1 className="text-xl font-bold poppins-medium">
+                                    Search New <span className="text-purple-500">Contacts</span>
+                                </h1>
+                                <p className='mt-2 text-sm text-neutral-400'>
+                                    Type a name or email to start a direct conversation.
+                                </p>
                             </div>
                         )
                     }

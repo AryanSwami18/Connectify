@@ -49,7 +49,7 @@ function Chat() {
   }
 
   return (
-    <div className='h-[100vh] text-white flex relative'>
+    <div className='relative flex h-screen overflow-hidden bg-[#11131a] text-white'>
       {!isInVideoCall && <ContactContainer/>}    
       {isInVideoCall ? (
         <VideoCall className='w-full'/> 

@@ -1,14 +1,13 @@
 import { useSocket } from '@/context/socketContext';
 import { useAppStore } from '@/store';
 import EmojiPicker from 'emoji-picker-react';
-import React, { useRef } from 'react';
+import React from 'react';
 import { useState } from 'react';
 import { GrAttachment } from 'react-icons/gr';
 import { IoSend } from 'react-icons/io5';
 import { RiEmojiStickerLine } from 'react-icons/ri';
 
 function MessageBar() {
-    const emojiRef = useRef();
     const [message, setMessage] = useState("");
     const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
     const {selectedChatType,selectedChatData,userInfo}  =useAppStore()
@@ -19,11 +18,14 @@ function MessageBar() {
     };
 
     const handleSendMessage = async () => {
-        // Logic for sending the message
+        if (!message.trim()) {
+            return;
+        }
+
         if(selectedChatType === 'contact'){
             socket.emit("sendMessage",{
                 sender:userInfo._id,
-                content:message,
+                content:message.trim(),
                 recipient:selectedChatData._id,
                 messageType:'text',
                 fileUrl:undefined
@@ -32,7 +34,7 @@ function MessageBar() {
         }else if(selectedChatType === 'channel'){
             socket.emit("sendGroupMessage",{
                 sender:userInfo._id,
-                content:message,
+                content:message.trim(),
                 messageType:'text',
                 fileUrl:undefined,
                 groupId:selectedChatData._id
@@ -42,27 +44,33 @@ function MessageBar() {
     };
 
     return (
-        <div className='h-[10vh] bg-[#1c1d25] flex justify-center items-center px-8 mb-2 gap-6'>
-            <div className="flex-1 flex bg-[#2a2b33] rounded-md items-center pr-5 gap-5">
+        <div className='relative flex items-center gap-3 border-t border-white/10 bg-[#1c1d25] px-3 py-3 sm:px-5 md:px-8'>
+            <div className="flex min-w-0 flex-1 items-center gap-3 rounded-2xl bg-[#2a2b33] pr-3 sm:gap-5 sm:pr-5">
                 <input
                     type='text'
-                    className='flex-1 bg-transparent rounded-sm focus:border-none focus:outline-none h-[60px] px-4'
+                    className='h-12 flex-1 bg-transparent px-4 text-sm focus:border-none focus:outline-none sm:h-[60px] sm:text-base'
                     placeholder='Enter The Message'
                     onChange={(e) => { setMessage(e.target.value); }}
                     value={message}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            handleSendMessage();
+                        }
+                    }}
                 />
-                <button className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all'>
+                <button type='button' className='hidden text-neutral-500 transition-all duration-300 focus:border-none focus:outline-none focus:text-white sm:block'>
                     <GrAttachment className='text-1xl' />
                 </button>
                 <div className="relative">
                     <button
-                        className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all'
+                        type='button'
+                        className='text-neutral-500 transition-all duration-300 focus:border-none focus:outline-none focus:text-white'
                         onClick={() => { setEmojiPickerOpen(prev => !prev); }} 
                     >
                         <RiEmojiStickerLine className='text-1xl' />
                     </button>
                     {emojiPickerOpen && ( 
-                        <div className='absolute bottom-16 right-0'>
+                        <div className='absolute bottom-14 right-0 z-20 scale-[0.82] origin-bottom-right sm:bottom-16 sm:scale-100'>
                             <EmojiPicker
                                 theme='dark'
                                 onEmojiClick={handleSubmitEmoji}
@@ -73,7 +81,8 @@ function MessageBar() {
                 </div>
             </div>
             <button
-                className='bg-purple-600 flex items-center justify-center rounded-xl p-5 focus:border-none focus:outline-none focus:text-white duration-300 transition-all hover:bg-purple-900'
+                type='button'
+                className='flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-600 transition-all duration-300 hover:bg-purple-900 focus:border-none focus:outline-none focus:text-white sm:h-14 sm:w-14'
                 onClick={handleSendMessage}
             >
                 <IoSend className='text-1xl' />

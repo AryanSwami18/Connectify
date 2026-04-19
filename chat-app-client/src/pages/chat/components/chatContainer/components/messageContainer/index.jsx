@@ -3,12 +3,17 @@ import { useAppStore } from '@/store';
 import moment from 'moment';
 import { apiClient } from '@/lib/apiClient';
 import { GET_MESSAGES, GET_GROUP_MESSAGES } from '@/utils/constant'; // Make sure to import the new constant
+import { toast } from 'sonner';
 
 function MessageContainer() {
   const { selectedChatType, selectedChatData, userInfo, selectedChatMessages, setSelectedChatMessages } = useAppStore();
   const scrollRef = useRef();
 
   useEffect(() => {
+    if (!selectedChatData?._id) {
+      return undefined;
+    }
+
     const getMessages = async () => {
       try {
         const response = await apiClient.post(GET_MESSAGES, { id: selectedChatData._id }, { withCredentials: true });
@@ -39,7 +44,13 @@ function MessageContainer() {
         getGroupMessages(); // Call the new function for group messages
       }
     }
+
+    return undefined;
   }, [selectedChatData, selectedChatType, setSelectedChatMessages]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [selectedChatMessages]);
 
   const renderMessages = () => {
     let lastDate = null;
@@ -67,12 +78,10 @@ function MessageContainer() {
 
   const renderDMMessages = (message) => {
     const isSender = message.sender === selectedChatData._id;
-    console.log('this is to check if the chat works')
-    console.log(message);
     return (
       <div className={`flex items-start my-2 ${isSender ? "justify-start" : "justify-end"}`}>
-        <div className={`max-w-[75%] p-3 rounded-3xl ${isSender ? "bg-[#8417ff]/80 text-white" : "bg-gray-200 text-black"}`}>
-          <p className="text-sm">{message.content ? message.content : message.message.content}</p>
+        <div className={`max-w-[85%] rounded-3xl p-3 sm:max-w-[75%] ${isSender ? "bg-[#8417ff]/80 text-white" : "bg-gray-200 text-black"}`}>
+          <p className="break-words text-sm">{message.content ? message.content : message.message.content}</p>
           <span className={`text-xs mt-1 block text-right ${isSender ? 'text-white' : 'text-gray-500'}`}>
             {moment(message.timestamp).format("LT")}
           </span>
@@ -83,16 +92,15 @@ function MessageContainer() {
 
   const renderGroupMessage = (message) => {
     const isSender = message.sender._id === userInfo._id; 
-    console.log(message);
     return (
       <div className={`flex items-start my-2 ${isSender ? "justify-end" : "justify-start"}`}>
-        <div className={`max-w-[75%] p-3 rounded-3xl ${isSender ? "bg-[#8417ff]/80 text-white" : "bg-gray-200 text-black"}`}>
+        <div className={`max-w-[85%] rounded-3xl p-3 sm:max-w-[75%] ${isSender ? "bg-[#8417ff]/80 text-white" : "bg-gray-200 text-black"}`}>
           {!isSender && (
             <div className="text-xs text-gray-500 mb-1">
               {message.sender.displayName}
             </div>
           )}
-          <p className="text-sm">{message.content || message.message.content}</p>
+          <p className="break-words text-sm">{message.content || message.message.content}</p>
           <span className={`text-xs mt-1 block text-right ${isSender ? 'text-white' : 'text-gray-500'}`}>
             {moment(message.timestamp).format("LT")}
           </span>
@@ -102,7 +110,7 @@ function MessageContainer() {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto scrollbar-hidden p-4 px-8 md:w-[64vw] lg:w-[74vw] xl:w-[80vw] sm:w-full">
+    <div className="flex-1 overflow-y-auto scrollbar-hidden px-3 py-4 sm:px-5 md:px-8">
       {renderMessages()}
       <div ref={scrollRef}></div>
     </div>
