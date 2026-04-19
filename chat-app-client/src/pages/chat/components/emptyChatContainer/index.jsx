@@ -1,6 +1,6 @@
 import { animationDefaultOption } from "@/utils/utils";
 import Lottie from "react-lottie";
-import connectifyLogo from "../../../../assets/Connectify-logo.png"; // Import the logo
+import connectifyLogo from "../../../../assets/Connectify-Logo.png"; // Import the logo
 
 function EmptyChatContainer() {
   return (
