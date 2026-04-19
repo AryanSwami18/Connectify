@@ -52,7 +52,7 @@ function Auth() {
       if(validateLogin()){
         try {
           const response = await apiClient.post(LOGIN_ROUTE,{email,password},{withCredentials:true})
-  
+          console.log(response);
           if(response.status === 200 && response.data.user._id){
             setUserInfo(response.data.user)
             if(response.data.user.profileSetup){            

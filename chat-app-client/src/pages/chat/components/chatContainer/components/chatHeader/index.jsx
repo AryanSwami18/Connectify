@@ -1,19 +1,28 @@
-import React from 'react';
 import { RiCloseFill } from 'react-icons/ri';
 import { useAppStore } from '@/store';
 import { Avatar } from '@/components/ui/avatar';
 import { AvatarImage } from '@/components/ui/avatar';
 import { GoDeviceCameraVideo } from "react-icons/go";
 import { getColor } from '@/utils/utils';
+import { useSocket } from '@/context/socketContext';
+import { toast } from 'sonner';
 
 function ChatHeader() {
-  const { closeChat, selectedChatData, selectedChatType } = useAppStore();
+  const socket = useSocket();
+  const { closeChat, selectedChatData, selectedChatType, startOutgoingVideoCall } = useAppStore();
+  const startVideoCall = async () => {
+    if (!socket) {
+      toast.error('Socket connection is not ready yet');
+      return;
+    }
 
+    if (!selectedChatData?._id) {
+      toast.error('Choose a contact before starting a call');
+      return;
+    }
 
-  const handleVideoCall = async () => {
-
+    startOutgoingVideoCall(selectedChatData)
   }
-
   return (
     <div className='h-[10vh] border-b-2 border-[#373747] flex items-center justify-between px-3'>
       <div className='flex gap-4 items-center'>
@@ -68,7 +77,7 @@ function ChatHeader() {
           selectedChatType == 'contact' && (
             <button
               className='text-neutral-500 focus:outline-none focus:text-white transition-all duration-300 '
-              onClick={handleVideoCall}
+              onClick={startVideoCall}
             >
               <GoDeviceCameraVideo className='text-3xl' />
             </button>
